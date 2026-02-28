@@ -616,13 +616,13 @@
       border-top: 1px solid var(--border);
     }
     .collab-label {
-      font-size: 0.72rem; font-weight: 600; letter-spacing: 0.15em;
+      font-size: 0.85rem; font-weight: 600; letter-spacing: 0.15em;
       text-transform: uppercase; color: var(--text-light);
-      text-align: center; margin-bottom: 1.5rem;
+      text-align: center; margin-bottom: 2rem;
     }
     .collab-logos {
-      display: flex; justify-content: center; align-items: center;
-      gap: 3rem; flex-wrap: wrap;
+      display: flex; justify-content: center; align-items: flex-start;
+      gap: 3.5rem; flex-wrap: wrap;
       transition: all 0.3s;
     }
     .collab-logo-item {
@@ -636,12 +636,12 @@
       transform: translateY(-3px);
     }
     .collab-logo-item img {
-      height: 56px; width: auto;
+      height: 80px; width: auto;
       object-fit: contain;
     }
     .collab-logo-item .logo-label {
-      font-size: 0.72rem; font-weight: 600; color: var(--text-light);
-      margin-top: 0.5rem; text-align: center; line-height: 1.3;
+      font-size: 0.82rem; font-weight: 600; color: var(--text-light);
+      margin-top: 0.7rem; text-align: center; line-height: 1.3;
       opacity: 0; transform: translateY(-4px);
       transition: all 0.3s ease;
       white-space: nowrap;
@@ -718,9 +718,13 @@
     .visitor-map-container {
       border-radius: 10px; overflow: hidden;
       border: 1px solid var(--border);
-      background: var(--bg);
-      padding: 0.5rem;
+      background: var(--white);
+      padding: 1.5rem;
+      width: 100%; max-width: 600px;
+      display: flex; align-items: center; justify-content: center;
     }
+    #mapmyvisitors-container { width: 100%; }
+    #mapmyvisitors-container img { max-width: 100%; border-radius: 6px; }
     body.dark .visitor-section { background: var(--white); border-color: var(--border); }
     body.dark .visitor-map-container { border-color: var(--border); background: var(--bg-alt); }
 
@@ -1209,8 +1213,13 @@
     <div class="visitor-inner fade-in">
       <div class="visitor-label">🌍 Visitor Map</div>
       <div class="visitor-map-container">
-        <!-- MapMyVisitors Globe Widget -->
-        <script type="text/javascript" id="mmvst_globe" src="//mapmyvisitors.com/globe.js?d=PSDl3yR8VgEb8Dp8waKupsvyiMkZZc5sPyRrnSRkeek"></script>
+        <!-- MapMyVisitors Flat Map Widget -->
+        <div id="mapmyvisitors-container">
+          <script type="text/javascript" id="mapmyvisitors" src="//mapmyvisitors.com/map.js?d=uAdC98v5iWHs8wSSOqoBUtuBLuDRBI0lm1uFTtxg9qo&cl=ffffff&w=a"></script>
+          <noscript>
+            <a href="https://mapmyvisitors.com/web/1c2xb" title="Visit tracker"><img src="https://mapmyvisitors.com/map.png?d=uAdC98v5iWHs8wSSOqoBUtuBLuDRBI0lm1uFTtxg9qo&cl=ffffff" style="max-width:100%;border-radius:8px;" /></a>
+          </noscript>
+        </div>
       </div>
     </div>
   </section>
