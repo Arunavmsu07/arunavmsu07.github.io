@@ -1,0 +1,33 @@
+name: Update publications from ORCID
+
+# Refreshes publications.json from the ORCID public API.
+# Runs on a daily schedule and can be triggered manually from the Actions tab.
+on:
+  schedule:
+    - cron: '0 7 * * *'   # every day at 07:00 UTC
+  workflow_dispatch:        # manual "Run workflow" button
+
+permissions:
+  contents: write           # allows the workflow to commit publications.json back
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Fetch works from ORCID
+        run: python3 .github/scripts/fetch_orcid.py
+
+      - name: Commit if changed
+        run: |
+          if [ -n "$(git status --porcelain publications.json)" ]; then
+            git config user.name  "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add publications.json
+            git commit -m "Update publications.json from ORCID [skip ci]"
+            git push
+          else
+            echo "No changes to publications.json."
+          fi
