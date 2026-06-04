@@ -1143,7 +1143,7 @@
         <div class="teaching-icon"><i class="fas fa-award"></i></div>
         <div>
           <h4>Open Scholarship Fellow — MSU Institute for Cyber-Enabled Research (ICER)</h4>
-          <p>Fall 2025 – Spring 2026 &bull; Funded by NSF Grant #2429466 and MSU ICER. Completed NASA Transform to Open Science (TOPS) curriculum with NASA certificate. Spring 2026 project fellow making research outputs publicly accessible.</p>
+          <p>Fall 2025 – Spring 2026 &bull; Funded by NSF Grant #2429466 and MSU ICER. Completed NASA Transform to Open Science (TOPS) curriculum with NASA certificate. Spring 2026 project fellow making research outputs publicly accessible. <a href="https://icer.msu.edu/news/congratulations-to-the-2026-open-scholarship-fellows" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600;">Featured in ICER&rsquo;s 2026 Open Scholarship Fellows announcement &rarr;</a></p>
         </div>
       </div>
     </div>
@@ -1361,65 +1361,89 @@
     ]);
 
     async function fetchORCIDWorks() {
-      try {
-        const resp = await fetch(`https://pub.orcid.org/v3.0/${ORCID_ID}/works`, {
-          headers: { 'Accept': 'application/json' }
-        });
-        if (!resp.ok) throw new Error('ORCID API error');
+      const PUBS_JSON   = 'publications.json';
+      const ORCID_URL   = `https://pub.orcid.org/v3.0/${ORCID_ID}/works`;
+      const OPENALEX_URL = `https://api.openalex.org/works?filter=author.orcid:${ORCID_ID}&per-page=50&sort=publication_date:desc&mailto=arunavnanda7@gmail.com`;
+
+      const normDOI = (d) => (d || '').toLowerCase().replace(/^https?:\/\/(dx\.)?doi\.org\//, '').trim();
+
+      // Source 1 (primary): same-origin publications.json, refreshed from ORCID
+      // by a scheduled GitHub Action. Same-origin requests are never blocked by
+      // CORS or browser extensions, so this works wherever the site is hosted.
+      async function fromLocalJSON() {
+        const resp = await fetch(PUBS_JSON, { cache: 'no-store' });
+        if (!resp.ok) throw new Error('publications.json HTTP ' + resp.status);
         const data = await resp.json();
-        
-        const works = data.group || [];
-        let newPubs = [];
+        return (Array.isArray(data) ? data : []).map(p => ({
+          title: p.title || 'Untitled', journal: p.journal || '',
+          year: p.year || '', doi: normDOI(p.doi)
+        }));
+      }
 
-        for (const group of works) {
-          const summary = group['work-summary']?.[0];
-          if (!summary) continue;
-
-          // Extract DOI
-          const extIds = summary['external-ids']?.['external-id'] || [];
-          const doiObj = extIds.find(e => e['external-id-type'] === 'doi');
-          const doi = doiObj?.['external-id-value'] || '';
-
-          // Skip if already displayed in static section
-          if (doi && knownDOIs.has(doi)) continue;
-
-          // Extract details
-          const title = summary.title?.title?.value || 'Untitled';
-          const journal = summary['journal-title']?.value || '';
-          const year = summary['publication-date']?.year?.value || '';
-          const type = summary.type || '';
-
-          // Only include journal articles and preprints
-          if (!['journal-article', 'preprint', 'book-chapter'].includes(type)) continue;
-
-          newPubs.push({ title, journal, year, doi, type });
+      // Source 2 (fallback): ORCID public API directly (useful in local dev).
+      async function fromOrcid() {
+        const resp = await fetch(ORCID_URL, { headers: { 'Accept': 'application/json' } });
+        if (!resp.ok) throw new Error('ORCID HTTP ' + resp.status);
+        const data = await resp.json();
+        const out = [];
+        for (const group of (data.group || [])) {
+          const s = group['work-summary']?.[0];
+          if (!s) continue;
+          const ext = s['external-ids']?.['external-id'] || [];
+          const doi = normDOI((ext.find(e => e['external-id-type'] === 'doi') || {})['external-id-value']);
+          const type = s.type || '';
+          if (!['journal-article', 'preprint', 'book-chapter', 'review'].includes(type)) continue;
+          out.push({ title: s.title?.title?.value || 'Untitled', journal: s['journal-title']?.value || '',
+                     year: s['publication-date']?.year?.value || '', doi });
         }
+        return out;
+      }
 
-        if (newPubs.length > 0) {
-          // Sort by year descending
-          newPubs.sort((a, b) => (b.year || 0) - (a.year || 0));
-          
-          let html = '<h3 style="font-family:var(--serif);font-size:1.1rem;font-weight:600;color:var(--teal);margin-top:2rem;margin-bottom:1rem;"><i class="ai ai-orcid" style="margin-right:0.4rem;"></i> Recent Publications (via ORCID)</h3>';
-          
-          newPubs.forEach((pub, i) => {
-            html += `<div class="orcid-pub-card fade-in visible">
-              <div class="pub-number-auto">${String(i + 3).padStart(2, '0')}</div>
-              <div class="pub-title">${pub.title}</div>
-              ${pub.journal ? `<div class="pub-journal">${pub.journal}${pub.year ? ', ' + pub.year : ''}</div>` : ''}
-              ${pub.doi ? `<div class="pub-doi"><a href="https://doi.org/${pub.doi}" target="_blank"><i class="fas fa-external-link-alt"></i> DOI: ${pub.doi}</a></div>` : ''}
-            </div>`;
-          });
-
-          orcidContainer.innerHTML = html;
-          orcidStatus.textContent = 'Publications sync\'d from ORCID · Last checked: ' + new Date().toLocaleDateString();
-        } else {
-          // All ORCID pubs are already shown in static section
-          orcidStatus.innerHTML = '<i class="ai ai-orcid" style="color:var(--teal);margin-right:0.3rem;"></i> Publications verified via <a href="https://orcid.org/' + ORCID_ID + '" target="_blank" style="color:var(--accent);text-decoration:none;">ORCID</a> · ' + new Date().toLocaleDateString();
+      // Source 3 (fallback): OpenAlex, also direct from the browser.
+      async function fromOpenAlex() {
+        const resp = await fetch(OPENALEX_URL, { headers: { 'Accept': 'application/json' } });
+        if (!resp.ok) throw new Error('OpenAlex HTTP ' + resp.status);
+        const data = await resp.json();
+        const out = [];
+        for (const w of (data.results || [])) {
+          const type = w.type || '';
+          if (!['article', 'preprint', 'book-chapter', 'review'].includes(type)) continue;
+          out.push({ title: w.title || w.display_name || 'Untitled',
+                     journal: w.primary_location?.source?.display_name || '',
+                     year: w.publication_year || '', doi: normDOI(w.doi) });
         }
-      } catch (err) {
-        // Silent fail — static publications remain visible as fallback
-        console.log('ORCID fetch skipped:', err.message);
+        return out;
+      }
+
+      let pubs = null;
+      for (const src of [fromLocalJSON, fromOrcid, fromOpenAlex]) {
+        try { pubs = await src(); break; }
+        catch (e) { console.log('Publication source unavailable:', e.message); }
+      }
+
+      if (pubs === null) {
         orcidStatus.innerHTML = '<i class="ai ai-orcid" style="color:var(--teal);margin-right:0.3rem;"></i> <a href="https://orcid.org/' + ORCID_ID + '" target="_blank" style="color:var(--accent);text-decoration:none;">View full publication list on ORCID</a>';
+        return;
+      }
+
+      const newPubs = pubs
+        .filter(p => !(p.doi && knownDOIs.has(p.doi)))
+        .sort((a, b) => (b.year || 0) - (a.year || 0));
+
+      if (newPubs.length > 0) {
+        let out = '<h3 style="font-family:var(--serif);font-size:1.1rem;font-weight:600;color:var(--teal);margin-top:2rem;margin-bottom:1rem;"><i class="ai ai-orcid" style="margin-right:0.4rem;"></i> Recent Publications</h3>';
+        newPubs.forEach((pub, i) => {
+          out += `<div class="orcid-pub-card fade-in visible">
+            <div class="pub-number-auto">${String(i + 3).padStart(2, '0')}</div>
+            <div class="pub-title">${pub.title}</div>
+            ${pub.journal ? `<div class="pub-journal">${pub.journal}${pub.year ? ', ' + pub.year : ''}</div>` : ''}
+            ${pub.doi ? `<div class="pub-doi"><a href="https://doi.org/${pub.doi}" target="_blank"><i class="fas fa-external-link-alt"></i> DOI: ${pub.doi}</a></div>` : ''}
+          </div>`;
+        });
+        orcidContainer.innerHTML = out;
+        orcidStatus.textContent = 'Publications synced from ORCID \u00b7 Last updated ' + new Date().toLocaleDateString();
+      } else {
+        orcidStatus.innerHTML = '<i class="ai ai-orcid" style="color:var(--teal);margin-right:0.3rem;"></i> Publications verified via <a href="https://orcid.org/' + ORCID_ID + '" target="_blank" style="color:var(--accent);text-decoration:none;">ORCID</a> \u00b7 ' + new Date().toLocaleDateString();
       }
     }
 
