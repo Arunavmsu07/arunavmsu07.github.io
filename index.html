@@ -903,7 +903,7 @@
           <!-- Stats Bar -->
           <div class="stats-bar fade-in">
             <div class="stat-item">
-              <div class="stat-number" data-target="2">0</div>
+              <div class="stat-number" id="pubCount" data-target="2">0</div>
               <div class="stat-label">Publications</div>
             </div>
             <div class="stat-item">
@@ -1425,6 +1425,15 @@
       const newPubs = pubs
         .filter(p => !(p.doi && knownDOIs.has(p.doi)))
         .sort((a, b) => (b.year || 0) - (a.year || 0));
+
+      // Keep the Publications stat counter in sync with the true total
+      // (static cards + any extra publications synced from ORCID).
+      const pubCountEl = document.getElementById('pubCount');
+      if (pubCountEl) {
+        const totalPubs = knownDOIs.size + newPubs.length;
+        pubCountEl.setAttribute('data-target', totalPubs);
+        if (pubCountEl.textContent !== '0') pubCountEl.textContent = totalPubs;
+      }
 
       if (newPubs.length > 0) {
         let out = '<h3 style="font-family:var(--serif);font-size:1.1rem;font-weight:600;color:var(--teal);margin-top:2rem;margin-bottom:1rem;"><i class="ai ai-orcid" style="margin-right:0.4rem;"></i> Recent Publications</h3>';
