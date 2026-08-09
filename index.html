@@ -907,7 +907,7 @@
               <div class="stat-label">Publications</div>
             </div>
             <div class="stat-item">
-              <div class="stat-number" data-target="3">0</div>
+              <div class="stat-number" data-target="4">0</div>
               <div class="stat-label">Conferences</div>
             </div>
             <div class="stat-item">
@@ -991,12 +991,28 @@
         <div class="pub-doi"><a href="https://doi.org/10.3389/fenvs.2024.1463852" target="_blank"><i class="fas fa-external-link-alt"></i> DOI: 10.3389/fenvs.2024.1463852</a></div>
       </div>
 
+      <div class="pub-card fade-in">
+        <div class="pub-number">03</div>
+        <div class="pub-title">A high-resolution multi-decadal assessment of agricultural drought risk pathways in India</div>
+        <div class="pub-authors">Rai, V., Singh, G., and <strong>Nanda, A.</strong> (2026)</div>
+        <div class="pub-journal">Environmental Research Communications, 8(6), 065030</div>
+        <div class="pub-doi"><a href="https://doi.org/10.1088/2515-7620/ae78b2" target="_blank"><i class="fas fa-external-link-alt"></i> DOI: 10.1088/2515-7620/ae78b2</a></div>
+      </div>
+
       <!-- Auto-fetched from ORCID (updates automatically when you publish) -->
       <div id="orcid-publications"></div>
       <p id="orcid-status" style="font-size:0.75rem;color:var(--text-light);text-align:right;margin-top:0.5rem;margin-bottom:0.5rem;"></p>
 
       <h3 style="font-family:var(--serif);font-size:1.3rem;font-weight:600;color:var(--navy-deep);margin-top:3rem;margin-bottom:1.5rem;">Conference Presentations</h3>
       <ul class="conf-list">
+        <!-- VERIFY: confirm the exact accepted paper title as it appears in the IGARSS 2026 program -->
+        <li class="conf-item fade-in">
+          <div class="conf-venue">IGARSS 2026<span>Washington, DC</span></div>
+          <div class="conf-details">
+            <h4>Global irrigation detection and intensity mapping using SMAP and Sentinel-1 observations</h4>
+            <p>IEEE International Geoscience and Remote Sensing Symposium &bull; August 9&ndash;14, 2026 &bull; Oral presentation, August 14 &nbsp;<span style="color:var(--accent);font-weight:600;">Supported by an IEEE GRSS Travel Grant</span></p>
+          </div>
+        </li>
         <li class="conf-item fade-in">
           <div class="conf-venue">IGARSS 2025<span>Brisbane, Australia</span></div>
           <div class="conf-details">
@@ -1140,6 +1156,29 @@
         <div>
           <h4>Open Scholarship Fellow — MSU Institute for Cyber-Enabled Research (ICER)</h4>
           <p>Fall 2025 – Spring 2026 &bull; Funded by NSF Grant #2429466 and MSU ICER. Completed NASA Transform to Open Science (TOPS) curriculum with NASA certificate. Spring 2026 project fellow making research outputs publicly accessible. <a href="https://icer.msu.edu/news/congratulations-to-the-2026-open-scholarship-fellows" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600;">Featured in ICER&rsquo;s 2026 Open Scholarship Fellows announcement &rarr;</a></p>
+        </div>
+      </div>
+      <div class="teaching-card fade-in">
+        <div class="teaching-icon"><i class="fas fa-trophy"></i></div>
+        <div>
+          <h4>George A. Mynsberge Experiential Learning Fund for Research</h4>
+          <p>Department of Biosystems and Agricultural Engineering, Michigan State University, 2026 &bull; Competitive departmental award supporting experiential research activities.</p>
+        </div>
+      </div>
+      <div class="teaching-card fade-in">
+        <div class="teaching-icon"><i class="fas fa-plane-departure"></i></div>
+        <div>
+          <h4>IEEE GRSS Travel Grant &mdash; IGARSS 2026</h4>
+          <p>IEEE Geoscience and Remote Sensing Society, 2026 &bull; Competitive travel support awarded for presenting accepted work at IGARSS 2026 in Washington, DC.</p>
+        </div>
+      </div>
+
+      <h3 style="font-family:var(--serif);font-size:1.3rem;font-weight:600;color:var(--navy-deep);margin-top:3.5rem;margin-bottom:1.5rem;">Training &amp; Professional Development</h3>
+      <div class="teaching-card fade-in">
+        <div class="teaching-icon"><i class="fas fa-satellite-dish"></i></div>
+        <div>
+          <h4>IGARSS 2026 Summer School &mdash; George Mason University</h4>
+          <p>Fairfax, VA &bull; August 6&ndash;8, 2026 &bull; Three-day intensive program held ahead of IGARSS 2026, hosted at the GMU Fairfax Campus and organized by the IGARSS 2026 Summer School Committee. <a href="https://2026.ieeeigarss.org/summer_school_program.php" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600;">View the final Summer School program &rarr;</a></p>
         </div>
       </div>
     </div>
@@ -1353,7 +1392,8 @@
     // Static publications (used as primary display, ORCID adds any NEW ones)
     const knownDOIs = new Set([
       '10.1016/j.agwat.2024.108918',
-      '10.3389/fenvs.2024.1463852'
+      '10.3389/fenvs.2024.1463852',
+      '10.1088/2515-7620/ae78b2'
     ]);
 
     async function fetchORCIDWorks() {
@@ -1439,7 +1479,7 @@
         let out = '<h3 style="font-family:var(--serif);font-size:1.1rem;font-weight:600;color:var(--teal);margin-top:2rem;margin-bottom:1rem;"><i class="ai ai-orcid" style="margin-right:0.4rem;"></i> Recent Publications</h3>';
         newPubs.forEach((pub, i) => {
           out += `<div class="orcid-pub-card fade-in visible">
-            <div class="pub-number-auto">${String(i + 3).padStart(2, '0')}</div>
+            <div class="pub-number-auto">${String(i + knownDOIs.size + 1).padStart(2, '0')}</div>
             <div class="pub-title">${pub.title}</div>
             ${pub.journal ? `<div class="pub-journal">${pub.journal}${pub.year ? ', ' + pub.year : ''}</div>` : ''}
             ${pub.doi ? `<div class="pub-doi"><a href="https://doi.org/${pub.doi}" target="_blank"><i class="fas fa-external-link-alt"></i> DOI: ${pub.doi}</a></div>` : ''}
