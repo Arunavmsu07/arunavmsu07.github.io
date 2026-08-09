@@ -320,26 +320,102 @@
         radial-gradient(ellipse at 80% 20%, rgba(26,138,125,0.03) 0%, transparent 50%),
         var(--bg);
     }
-    .timeline { position: relative; padding-left: 2rem; }
+    .timeline { position: relative; padding-left: 3.75rem; }
     .timeline::before {
-      content: ''; position: absolute; left: 0; top: 0;
-      width: 2px; height: 100%;
+      content: ''; position: absolute; left: 1.35rem; top: 0.6rem; bottom: 0.6rem;
+      width: 2px;
       background: linear-gradient(180deg, var(--accent), var(--teal), var(--border));
     }
-    .timeline-item { position: relative; padding-bottom: 2.5rem; }
+    .timeline-item { position: relative; padding-bottom: 1.5rem; }
     .timeline-item:last-child { padding-bottom: 0; }
-    .timeline-item::before {
-      content: ''; position: absolute; left: -2rem; top: 0.35rem;
-      width: 10px; height: 10px; border-radius: 50%;
-      background: var(--teal); border: 2px solid var(--bg);
-      transform: translateX(-4px);
+
+    /* Icon medallion sitting on the rail */
+    .timeline-marker {
+      position: absolute; left: -3.75rem; top: 1.35rem;
+      width: 44px; height: 44px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--navy), var(--teal));
+      display: flex; align-items: center; justify-content: center;
+      color: #FFFFFF; font-size: 1rem;
+      box-shadow: 0 0 0 4px var(--bg); z-index: 2;
+      transition: transform 0.25s ease;
+    }
+    .timeline-item:hover .timeline-marker { transform: scale(1.08); }
+
+    /* Card */
+    .timeline-card {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 12px; padding: 1.5rem 1.6rem;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+    }
+    .timeline-item:hover .timeline-card {
+      border-color: var(--accent);
+      box-shadow: 0 6px 24px rgba(0,0,0,0.06);
+      transform: translateY(-2px);
+    }
+
+    .tl-head {
+      display: flex; flex-wrap: wrap; align-items: baseline;
+      justify-content: space-between; gap: 0.5rem 1rem; margin-bottom: 0.5rem;
     }
     .timeline-item h3 {
-      font-family: var(--serif); font-size: 1.1rem; font-weight: 600;
-      color: var(--navy-deep); margin-bottom: 0.2rem;
+      font-family: var(--serif); font-size: 1.12rem; font-weight: 600;
+      color: var(--navy-deep); margin: 0; line-height: 1.35;
     }
-    .timeline-item .meta { font-size: 0.85rem; color: var(--teal); font-weight: 500; margin-bottom: 0.6rem; }
+    .tl-type {
+      font-size: 0.66rem; font-weight: 700; letter-spacing: 0.09em;
+      text-transform: uppercase; color: var(--accent);
+      background: rgba(46,117,182,0.09); border: 1px solid rgba(46,117,182,0.22);
+      padding: 0.24rem 0.6rem; border-radius: 999px; white-space: nowrap; flex-shrink: 0;
+    }
+
+    /* Linked institution */
+    .tl-org {
+      display: flex; align-items: baseline; gap: 0.5rem;
+      font-size: 0.9rem; font-weight: 600; margin-bottom: 0.7rem; line-height: 1.5;
+    }
+    .tl-org > i { color: var(--teal); font-size: 0.82rem; position: relative; top: 1px; flex-shrink: 0; }
+    .tl-org a {
+      color: var(--teal); text-decoration: none;
+      border-bottom: 1px solid transparent; transition: border-color 0.2s ease, color 0.2s ease;
+    }
+    .tl-org a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+    .tl-org a i { font-size: 0.62em; margin-left: 0.34rem; opacity: 0.65; }
+    .tl-org .tl-sub { color: var(--text-light); font-weight: 400; }
+
+    /* Fact pills: dates, location, GPA */
+    .tl-facts { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-bottom: 0.85rem; }
+    .tl-fact {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      font-size: 0.76rem; font-weight: 500; color: var(--text-light);
+      background: var(--bg-alt); border: 1px solid var(--border);
+      padding: 0.3rem 0.68rem; border-radius: 6px; white-space: nowrap;
+    }
+    .tl-fact i { font-size: 0.72rem; color: var(--teal); }
+    .tl-fact.is-current { color: var(--teal); border-color: rgba(26,138,125,0.35); background: rgba(26,138,125,0.08); }
+    .tl-fact.is-current i { animation: tlPulse 2s ease-in-out infinite; }
+    @keyframes tlPulse { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+
     .timeline-item p, .timeline-item li { font-size: 0.9rem; color: var(--text-light); line-height: 1.75; }
+    .timeline-item p { margin: 0; }
+    .timeline-item ul { margin-top: 0.7rem; margin-bottom: 0; padding-left: 0; list-style: none; }
+    .timeline-item li { position: relative; padding-left: 1.4rem; margin-bottom: 0.4rem; }
+    .timeline-item li::before {
+      content: '\f054'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
+      position: absolute; left: 0; top: 0.34rem;
+      font-size: 0.56rem; color: var(--accent); opacity: 0.55;
+    }
+
+    body.dark .timeline-marker { box-shadow: 0 0 0 4px var(--bg); }
+    body.dark .tl-type { background: rgba(74,159,229,0.14); border-color: rgba(74,159,229,0.3); color: var(--accent-light); }
+    body.dark .timeline-card { background: #1A2230; border-color: #2A3545; }
+
+    @media (max-width: 640px) {
+      .timeline { padding-left: 0; }
+      .timeline::before { display: none; }
+      .timeline-marker { position: static; margin-bottom: -22px; margin-left: 1.4rem; left: auto; top: auto; }
+      .timeline-card { padding: 1.4rem 1.1rem 1.3rem; }
+      .tl-head { flex-direction: column; align-items: flex-start; }
+    }
     .timeline-item ul { margin-top: 0.5rem; padding-left: 1.2rem; }
     .timeline-item li { margin-bottom: 0.4rem; }
 
@@ -598,16 +674,20 @@
     }
     .news-items {
       display: flex; flex-direction: column;
-      animation: newsScroll 12s ease-in-out infinite;
+      animation: newsScroll 24s ease-in-out infinite;
     }
+    @media (prefers-reduced-motion: reduce) { .news-items { animation: none; } }
     .news-item { white-space: nowrap; height: 1.4em; line-height: 1.4em; }
     .news-item a { color: var(--accent-light); text-decoration: none; }
     .news-item a:hover { text-decoration: underline; }
     @keyframes newsScroll {
-      0%, 28% { transform: translateY(0); }
-      33%, 61% { transform: translateY(-1.4em); }
-      66%, 94% { transform: translateY(-2.8em); }
-      100% { transform: translateY(0); }
+      0%, 13%    { transform: translateY(0); }
+      16.6%, 30% { transform: translateY(-1.4em); }
+      33.3%, 46% { transform: translateY(-2.8em); }
+      50%, 63%   { transform: translateY(-4.2em); }
+      66.6%, 80% { transform: translateY(-5.6em); }
+      83.3%, 96% { transform: translateY(-7.0em); }
+      100%       { transform: translateY(0); }
     }
 
     /* ===== COLLABORATOR LOGOS ===== */
@@ -802,9 +882,12 @@
     <span class="news-badge">New</span>
     <div class="news-scroll">
       <div class="news-items">
-        <div class="news-item">📡 Presented at <strong>IGARSS 2025</strong> in Brisbane, Australia — August 2025</div>
-        <div class="news-item">🎓 Selected as <strong>Open Scholarship Fellow</strong> at MSU ICER — Fall 2025 – Spring 2026</div>
-        <div class="news-item">📄 Published in <a href="https://doi.org/10.1016/j.agwat.2024.108918"><strong>Agricultural Water Management</strong></a> — 2024</div>
+        <div class="news-item">🛰️ Presenting at <strong>IGARSS 2026</strong>, Washington DC — August 14, 2026</div>
+        <div class="news-item">✈️ Awarded an <strong>IEEE GRSS Travel Grant</strong> for IGARSS 2026</div>
+        <div class="news-item">🎓 Attended the <a href="https://2026.ieeeigarss.org/summer_school_program.php" target="_blank" rel="noopener"><strong>IGARSS 2026 Summer School</strong></a> at George Mason University — August 6–8, 2026</div>
+        <div class="news-item">🏆 Received the <strong>George A. Mynsberge Experiential Learning Fund for Research</strong> — MSU BAE, 2026</div>
+        <div class="news-item">📄 New paper in <a href="https://doi.org/10.1088/2515-7620/ae78b2" target="_blank" rel="noopener"><strong>Environmental Research Communications</strong></a> — 2026</div>
+        <div class="news-item">🔓 <a href="https://icer.msu.edu/news/congratulations-to-the-2026-open-scholarship-fellows" target="_blank" rel="noopener"><strong>Open Scholarship Fellow</strong></a> at MSU ICER — Fall 2025 – Spring 2026</div>
       </div>
     </div>
   </div>
@@ -1099,32 +1182,107 @@
         <div class="section-line"></div>
       </div>
       <div class="timeline">
+
         <div class="timeline-item fade-in">
-          <h3>Ph.D. Candidate &amp; Graduate Research Assistant</h3>
-          <div class="meta">RsHydroAg Lab, Michigan State University &bull; Sept 2021 – Present &bull; GPA: 3.88/4.00</div>
-          <p>Major in Biosystems Engineering, concurrent in Civil and Environmental Engineering. Advisor: Dr. Narendra N. Das.</p>
-          <ul>
-            <li>Developed soil hydraulic property optimization using 6 years of NASA SMAP data and a modified SCE-UA algorithm within the RHEAS framework.</li>
-            <li>Designed high-resolution pipeline assessing global irrigation patterns using SMAP enhanced-resolution products.</li>
-            <li>Quantified ET-driven water loss in bioenergy cropping systems using 12 years of eddy covariance data.</li>
-            <li>Participated in NASA SMAPVEX22 field campaign (July–Aug 2022).</li>
-            <li>Built scientific GUIs in Python and JavaScript for research data workflows.</li>
-          </ul>
+          <div class="timeline-marker"><i class="fas fa-satellite"></i></div>
+          <div class="timeline-card">
+            <div class="tl-head">
+              <h3>Ph.D. Candidate &amp; Graduate Research Assistant</h3>
+              <span class="tl-type">Doctorate</span>
+            </div>
+            <div class="tl-org">
+              <i class="fas fa-flask"></i>
+              <span>
+                <a href="https://sites.google.com/view/rshydroag/" target="_blank" rel="noopener">RsHydroAg Lab<i class="fas fa-external-link-alt"></i></a>,
+                <a href="https://www.canr.msu.edu/bae/" target="_blank" rel="noopener">Michigan State University<i class="fas fa-external-link-alt"></i></a>
+                <span class="tl-sub">&bull; Advisor: Dr. Narendra N. Das</span>
+              </span>
+            </div>
+            <div class="tl-facts">
+              <span class="tl-fact is-current"><i class="fas fa-circle"></i> Sept 2021 &ndash; Present</span>
+              <span class="tl-fact"><i class="fas fa-map-marker-alt"></i> East Lansing, MI, USA</span>
+              <span class="tl-fact"><i class="fas fa-star"></i> GPA 3.88 / 4.00</span>
+              <span class="tl-fact"><i class="fas fa-id-badge"></i> <a href="https://www.canr.msu.edu/people/arunav-nanda-1" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;">MSU Profile</a></span>
+            </div>
+            <p>Major in Biosystems Engineering, concurrent in Civil and Environmental Engineering.</p>
+            <ul>
+              <li>Developed soil hydraulic property optimization using 6 years of NASA SMAP data and a modified SCE-UA algorithm within the RHEAS framework.</li>
+              <li>Designed high-resolution pipeline assessing global irrigation patterns using SMAP enhanced-resolution products.</li>
+              <li>Quantified ET-driven water loss in bioenergy cropping systems using 12 years of eddy covariance data.</li>
+              <li>Participated in NASA SMAPVEX22 field campaign (July&ndash;Aug 2022).</li>
+              <li>Built scientific GUIs in Python and JavaScript for research data workflows.</li>
+            </ul>
+          </div>
         </div>
+
         <div class="timeline-item fade-in">
-          <h3>Junior Research Fellow (JRF)</h3>
-          <div class="meta">National Institute of Hydrology, Regional Centre, Guwahati &bull; Nov 2020 – Aug 2021</div>
-          <p>Investigated flood behavior and unexpected drought-like conditions in the Garo Hills District of Meghalaya under the National Hydrology Project. Applied remote sensing and GIS techniques to analyze precipitation patterns and surface water dynamics. Supervisor: Dr. Sanjay Kumar Sharma.</p>
+          <div class="timeline-marker"><i class="fas fa-water"></i></div>
+          <div class="timeline-card">
+            <div class="tl-head">
+              <h3>Junior Research Fellow (JRF)</h3>
+              <span class="tl-type">Research</span>
+            </div>
+            <div class="tl-org">
+              <i class="fas fa-building-columns"></i>
+              <span>
+                <a href="https://nihroorkee.gov.in/" target="_blank" rel="noopener">National Institute of Hydrology<i class="fas fa-external-link-alt"></i></a>
+                <span class="tl-sub">&bull; Regional Centre, Guwahati &bull; Supervisor: Dr. Sanjay Kumar Sharma</span>
+              </span>
+            </div>
+            <div class="tl-facts">
+              <span class="tl-fact"><i class="fas fa-calendar-alt"></i> Nov 2020 &ndash; Aug 2021</span>
+              <span class="tl-fact"><i class="fas fa-map-marker-alt"></i> Guwahati, Assam, India</span>
+              <span class="tl-fact"><i class="fas fa-diagram-project"></i> National Hydrology Project</span>
+            </div>
+            <p>Investigated flood behavior and unexpected drought-like conditions in the Garo Hills District of Meghalaya under the National Hydrology Project. Applied remote sensing and GIS techniques to analyze precipitation patterns and surface water dynamics.</p>
+          </div>
         </div>
+
         <div class="timeline-item fade-in">
-          <h3>M.Tech in Remote Sensing &amp; GIS</h3>
-          <div class="meta">Indian Institute of Remote Sensing (IIRS-ISRO), Dehradun &bull; 2018 – 2020 &bull; GPA: 8.56/10</div>
-          <p>Specialization in Water Resources.</p>
+          <div class="timeline-marker"><i class="fas fa-satellite-dish"></i></div>
+          <div class="timeline-card">
+            <div class="tl-head">
+              <h3>M.Tech in Remote Sensing &amp; GIS</h3>
+              <span class="tl-type">Master&rsquo;s</span>
+            </div>
+            <div class="tl-org">
+              <i class="fas fa-graduation-cap"></i>
+              <span>
+                <a href="https://www.iirs.gov.in/" target="_blank" rel="noopener">Indian Institute of Remote Sensing (IIRS)<i class="fas fa-external-link-alt"></i></a>
+                <span class="tl-sub">&bull; <a href="https://www.isro.gov.in/IIRS.html" target="_blank" rel="noopener" style="font-weight:400;">ISRO<i class="fas fa-external-link-alt"></i></a>, Dept. of Space</span>
+              </span>
+            </div>
+            <div class="tl-facts">
+              <span class="tl-fact"><i class="fas fa-calendar-alt"></i> 2018 &ndash; 2020</span>
+              <span class="tl-fact"><i class="fas fa-map-marker-alt"></i> Dehradun, Uttarakhand, India</span>
+              <span class="tl-fact"><i class="fas fa-star"></i> GPA 8.56 / 10</span>
+            </div>
+            <p>Specialization in Water Resources.</p>
+          </div>
         </div>
+
         <div class="timeline-item fade-in">
-          <h3>B.Tech in Agricultural Engineering</h3>
-          <div class="meta">Orissa University of Agriculture and Technology, Bhubaneswar &bull; 2014 – 2018 &bull; GPA: 8.15/10</div>
+          <div class="timeline-marker"><i class="fas fa-seedling"></i></div>
+          <div class="timeline-card">
+            <div class="tl-head">
+              <h3>B.Tech in Agricultural Engineering</h3>
+              <span class="tl-type">Bachelor&rsquo;s</span>
+            </div>
+            <div class="tl-org">
+              <i class="fas fa-graduation-cap"></i>
+              <span>
+                <a href="https://www.ouat.nic.in/" target="_blank" rel="noopener">Odisha University of Agriculture and Technology<i class="fas fa-external-link-alt"></i></a>
+                <span class="tl-sub">&bull; College of Agricultural Engineering &amp; Technology</span>
+              </span>
+            </div>
+            <div class="tl-facts">
+              <span class="tl-fact"><i class="fas fa-calendar-alt"></i> 2014 &ndash; 2018</span>
+              <span class="tl-fact"><i class="fas fa-map-marker-alt"></i> Bhubaneswar, Odisha, India</span>
+              <span class="tl-fact"><i class="fas fa-star"></i> GPA 8.15 / 10</span>
+            </div>
+          </div>
         </div>
+
       </div>
 
       <h3 style="font-family:var(--serif);font-size:1.3rem;font-weight:600;color:var(--navy-deep);margin-top:3.5rem;margin-bottom:1.5rem;">Teaching &amp; Mentoring</h3>
